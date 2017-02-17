@@ -1,6 +1,6 @@
 # AndroidPermissionX
 
-[中文文档](https://github.com/fccaikai/AndroidPermissionX/README_ZH.md)
+[中文文档](https://github.com/fccaikai/AndroidPermissionX/blob/master/README_ZH.md)
 
 ### Setup
 
