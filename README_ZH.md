@@ -1,8 +1,8 @@
 # AndroidPermissionX
 
-### Setup
+### 配置
 
-in your application's ```build.gradle```
+在项目的 ```build.gradle```中，添加：
 
  ```
 allprojects {
@@ -14,7 +14,7 @@ allprojects {
 
  ```
  
- in your app's ```build.gradle```
+ 在app的 ```build.gradle```中，添加：
  
  ```
  dependencies {
@@ -22,21 +22,21 @@ allprojects {
  }
  ```
 
-### Usage
+### 使用
 
-create a PermissionCompat.Builder instance
+创建一个 PermissionCompat.Builder对象
 
 ```
 	PermissionCompat.Builder builder = new PermissionCompat.Builder(Context);
 ```
 
-add Permissions Array
+添加要请求的权限数组
 
 ```
 	builder.addPermissions(new String[]{Manifest.permission.CAMERA});
 ```
 
-add callBack
+添加回调方法
 
 ```
 builder.addRequestPermissionsCallBack(new OnRequestPermissionsCallBack() {
@@ -51,7 +51,7 @@ builder.addRequestPermissionsCallBack(new OnRequestPermissionsCallBack() {
                 })
 ```
 
-request permission
+开始请求权限
 
 ```
 builder.build().request();

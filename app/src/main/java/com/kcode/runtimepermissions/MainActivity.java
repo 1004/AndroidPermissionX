@@ -28,9 +28,9 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResult(String[] permissions, int[] grantResults) {
                         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                            Log.d(TAG, "授权成功");
+                            Log.d(TAG, "success");
                         } else {
-                            Log.d(TAG, "授权失败");
+                            Log.d(TAG, "falied");
                         }
                     }
                 }).build().request();
