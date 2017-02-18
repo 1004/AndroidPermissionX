@@ -1,5 +1,7 @@
 # AndroidPermissionX
 
+[官网介绍](https://developer.android.com/training/permissions/requesting.html)
+
 ### 配置
 
 在项目的 ```build.gradle```中，添加：

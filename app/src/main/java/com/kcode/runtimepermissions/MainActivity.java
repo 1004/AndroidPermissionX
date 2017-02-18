@@ -23,15 +23,21 @@ public class MainActivity extends AppCompatActivity {
     public void openCamera(View view) {
 
         new PermissionCompat.Builder(this)
-                .addPermissions(new String[]{Manifest.permission.CAMERA})
+                .addPermissions(new String[]{Manifest.permission.READ_PHONE_STATE})
+                .addPermissionRationale("请给我找个权限")
                 .addRequestPermissionsCallBack(new OnRequestPermissionsCallBack() {
                     @Override
                     public void onResult(String[] permissions, int[] grantResults) {
                         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                             Log.d(TAG, "success");
                         } else {
-                            Log.d(TAG, "falied");
+                            Log.d(TAG, "failed");
                         }
+                    }
+
+                    @Override
+                    public void onAuthorized() {
+                        Log.d(TAG, "Authorized");
                     }
                 }).build().request();
     }

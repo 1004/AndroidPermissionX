@@ -2,6 +2,7 @@
 
 [中文文档](https://github.com/fccaikai/AndroidPermissionX/blob/master/README_ZH.md)
 
+[Android Developer](https://developer.android.com/training/permissions/requesting.html)
 ### Setup
 
 in your application's ```build.gradle```

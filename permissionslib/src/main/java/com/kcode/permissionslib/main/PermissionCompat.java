@@ -14,14 +14,20 @@ import android.util.Log;
 public class PermissionCompat {
 
     private Context mContext;
+    private String mExplain;
     private String[] mPermissions;
-    private String checkPermission;
     private OnRequestPermissionsCallBack mCallBack;
     private CallBackBroadcastReceiver mCallBackBroadcastReceiver = new CallBackBroadcastReceiver();
 
     public void request() {
 
-        Intent intent = RequestActivity.newIntent(mContext, 1000, mPermissions, mCallBack);
+        if (mPermissions == null || mPermissions.length == 0) {
+            throw new NullPointerException(mPermissions == null
+                    ? "mPermissions is null"
+                    : "mPermissions is empty");
+        }
+
+        Intent intent = RequestActivity.newIntent(mContext, mPermissions, mExplain, mCallBack);
         mContext.startActivity(intent);
         LocalBroadcastManager.getInstance(mContext)
                 .registerReceiver(mCallBackBroadcastReceiver,
@@ -37,8 +43,8 @@ public class PermissionCompat {
             mPermissionCompat.mContext = context;
         }
 
-        public Builder addCheckPermission(String permission) {
-            mPermissionCompat.checkPermission = permission;
+        public Builder addPermissionRationale(String explain) {
+            mPermissionCompat.mExplain = explain;
             return this;
         }
 
@@ -57,18 +63,28 @@ public class PermissionCompat {
         }
     }
 
-    class CallBackBroadcastReceiver extends BroadcastReceiver{
+    class CallBackBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d("BroadcastReceiver", intent.getAction().toString());
 
-            String[] permissions = intent.getStringArrayExtra("permissions");
-            int[] grantResults = intent.getIntArrayExtra("grantResults");
-
-            if (mCallBack != null) {
-                mCallBack.onResult(permissions,grantResults);
+            if (mCallBack == null) {
+                return;
             }
+
+            int flag = intent.getIntExtra(Constants.REQUEST_FLAG, 0);
+            switch (flag) {
+                case Constants.REQUEST_RESULT:
+                    String[] permissions = intent.getStringArrayExtra("permissions");
+                    int[] grantResults = intent.getIntArrayExtra("grantResults");
+                    mCallBack.onResult(permissions, grantResults);
+                    break;
+                case Constants.AUTHORIZED:
+                    mCallBack.onAuthorized();
+                    break;
+            }
+
 
             //取消注册
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mCallBackBroadcastReceiver);

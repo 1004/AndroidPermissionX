@@ -1,7 +1,7 @@
 package com.kcode.permissionslib.main;
 
-import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -20,18 +21,20 @@ import android.util.Log;
 public class RequestActivity extends AppCompatActivity {
 
     private static final String TAG = "RequestActivity";
-    private static final String REQUEST_CODE = "requestCode";
     private static final String PERMISSIONS = "permissions";
+    private static final String EXPLAIN = "explain";
+    private static final int REQUEST_CODE = 1000;
 
+    private String mExplain;
     private String[] mPermissions;
 
-    public static Intent newIntent(Context context, int requestCode,
-                                   String[] permissions, OnRequestPermissionsCallBack callBack) {
+    public static Intent newIntent(Context context, String[] permissions,
+                                   String explain, OnRequestPermissionsCallBack callBack) {
         Intent intent = new Intent(context, RequestActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putStringArray(PERMISSIONS, permissions);
-        bundle.putInt(REQUEST_CODE, requestCode);
-        intent.putExtras(bundle);
+        Bundle extras = new Bundle();
+        extras.putStringArray(PERMISSIONS, permissions);
+        extras.putString(EXPLAIN, explain);
+        intent.putExtras(extras);
 
         return intent;
     }
@@ -46,45 +49,89 @@ public class RequestActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        Bundle bundle = getIntent().getExtras();
-        mPermissions = bundle.getStringArray(PERMISSIONS);
+        Bundle extras = getIntent().getExtras();
+        mExplain = extras.getString(EXPLAIN);
+        mPermissions = extras.getStringArray(PERMISSIONS);
     }
 
     private void checkPermission() {
-        int permissionCheck = ContextCompat.checkSelfPermission(getApplicationContext(),
-                mPermissions[0]);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+        int deniedIndex = checkSelfPermissions(mPermissions);
+        if (deniedIndex != -1) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    this, Manifest.permission.CAMERA)) {
-                Log.d(TAG, "拒绝过了");
-                ActivityCompat.requestPermissions(this,
-                        mPermissions, 1000);
+                    this, mPermissions[deniedIndex])) {
+                Log.d(TAG, "denied");
+                showExplainDialog();
             } else {
-                Log.d(TAG, "开始请求权限");
-                ActivityCompat.requestPermissions(this,
-                        mPermissions, 1000);
+                Log.d(TAG, "start request permission");
+                requestPermission();
             }
         } else {
-            Log.d(TAG, "已经有权限");
+            Log.d(TAG, "Authorized");
+            Intent intent = new Intent();
+            intent.putExtra(Constants.REQUEST_FLAG, Constants.AUTHORIZED);
+            sendMessage(intent);
         }
+    }
+
+    private int checkSelfPermissions(String[] permissions) {
+        int index = -1;
+        for (int i = 0; i < permissions.length; i++) {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                    permissions[i]) != PackageManager.PERMISSION_GRANTED) {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(this,
+                mPermissions, REQUEST_CODE);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
-            case 1000:
+            case REQUEST_CODE:
 
                 Intent intent = new Intent();
                 Bundle args = new Bundle();
-                args.putStringArray("permissions", permissions);
-                args.putIntArray("grantResults", grantResults);
+                args.putStringArray(Constants.PERMISSIONS, permissions);
+                args.putIntArray(Constants.GRANT_RESULTS, grantResults);
+                args.putInt(Constants.REQUEST_FLAG, Constants.REQUEST_RESULT);
                 intent.putExtras(args);
-                intent.setAction(getPackageName());
-                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
-                finish();
+                sendMessage(intent);
+
                 break;
         }
+    }
+
+    private void sendMessage(Intent intent) {
+        intent.setAction(getPackageName());
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        finish();
+    }
+
+    private void showExplainDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage(mExplain)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        requestPermission();
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        finish();
+                    }
+                })
+                .show()
+                .setCancelable(false);
     }
 }
