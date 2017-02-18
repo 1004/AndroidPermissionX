@@ -20,7 +20,7 @@ allprojects {
  
  ```
  dependencies {
-	        compile 'com.github.fccaikai:AndroidPermissionX:0.1.0'
+        compile 'com.github.fccaikai:AndroidPermissionX:0.1.0'
  }
  ```
 
@@ -29,14 +29,21 @@ allprojects {
 创建一个 PermissionCompat.Builder对象
 
 ```
-	PermissionCompat.Builder builder = new PermissionCompat.Builder(Context);
+PermissionCompat.Builder builder = new PermissionCompat.Builder(Context);
 ```
 
 添加要请求的权限数组
 
 ```
-	builder.addPermissions(new String[]{Manifest.permission.CAMERA});
+builder.addPermissions(new String[]{Manifest.permission.CAMERA});
 ```
+
+设置弹出框,当```shouldShowRequestPermissionRationale()``` 返回true的时候，即用户已经拒绝了一次，给用户提示一个解释信息，为什么需要这个权限
+
+```
+builder.addPermissionRationale("say why need the permission");
+```
+
 
 添加回调方法
 
@@ -46,9 +53,16 @@ builder.addRequestPermissionsCallBack(new OnRequestPermissionsCallBack() {
                     public void onResult(String[] permissions, int[] grantResults) {
                         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                             Log.d(TAG, "success");
+                            //do something
                         } else {
                             Log.d(TAG, "falied");
                         }
+                    }
+                    
+                    @Override
+                    public void onAuthorized() {
+                        Log.d(TAG, "Authorized");
+                        //do something
                     }
                 })
 ```

@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
         new PermissionCompat.Builder(this)
                 .addPermissions(new String[]{Manifest.permission.READ_PHONE_STATE})
-                .addPermissionRationale("请给我找个权限")
+                .addPermissionRationale("say why need the permission")
                 .addRequestPermissionsCallBack(new OnRequestPermissionsCallBack() {
                     @Override
                     public void onResult(String[] permissions, int[] grantResults) {

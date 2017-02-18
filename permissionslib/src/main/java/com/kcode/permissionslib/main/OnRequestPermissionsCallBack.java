@@ -1,19 +1,17 @@
 package com.kcode.permissionslib.main;
 
-import android.support.annotation.NonNull;
-
 /**
- * 请求权限回调
+ * request permission callback
  * Created by caik on 2017/2/17.
  */
 
 public interface OnRequestPermissionsCallBack{
     /**
      *
-     * @param permissions       请求的权限列表
-     * @param grantResults      对应的返回结果
+     * @param permissions       permission array
+     * @param grantResults      request result array
      */
-    void onResult(@NonNull String[] permissions, @NonNull int[] grantResults);
+    void onResult(String[] permissions, int[] grantResults);
 
     void onAuthorized();
 }

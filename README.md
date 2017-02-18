@@ -21,7 +21,7 @@ allprojects {
  
  ```
  dependencies {
-	        compile 'com.github.fccaikai:AndroidPermissionX:0.1.0'
+        compile 'com.github.fccaikai:AndroidPermissionX:0.1.0'
  }
  ```
 
@@ -30,16 +30,22 @@ allprojects {
 create a PermissionCompat.Builder instance
 
 ```
-	PermissionCompat.Builder builder = new PermissionCompat.Builder(Context);
+PermissionCompat.Builder builder = new PermissionCompat.Builder(Context);
 ```
 
 add Permissions Array
 
 ```
-	builder.addPermissions(new String[]{Manifest.permission.CAMERA});
+builder.addPermissions(new String[]{Manifest.permission.CAMERA});
 ```
 
-add callBack
+to show Rationale Dialog when ```shouldShowRequestPermissionRationale()``` retuen true , to explain why need the permission
+
+```
+builder.addPermissionRationale("say why need the permission");
+```
+
+add [OnRequestPermissionsCallBack](https://github.com/fccaikai/AndroidPermissionX/blob/master/permissionslib/src/main/java/com/kcode/permissionslib/main/OnRequestPermissionsCallBack.java),like:
 
 ```
 builder.addRequestPermissionsCallBack(new OnRequestPermissionsCallBack() {
@@ -47,9 +53,16 @@ builder.addRequestPermissionsCallBack(new OnRequestPermissionsCallBack() {
                     public void onResult(String[] permissions, int[] grantResults) {
                         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                             Log.d(TAG, "success");
+                            //do something
                         } else {
                             Log.d(TAG, "falied");
                         }
+                    }
+                    
+                    @Override
+                    public void onAuthorized() {
+                        Log.d(TAG, "Authorized");
+                        //do something
                     }
                 })
 ```
