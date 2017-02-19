@@ -2,13 +2,11 @@ package com.kcode.runtimepermissions;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.kcode.permissionslib.main.OnRequestPermissionsCallBack;
 import com.kcode.permissionslib.main.PermissionCompat;
@@ -30,21 +28,15 @@ public class MainActivity extends AppCompatActivity {
                 .addPermissionRationale("say why need the permission")
                 .addRequestPermissionsCallBack(new OnRequestPermissionsCallBack() {
                     @Override
-                    public void onResult(String[] permissions, int[] grantResults) {
-                        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                            Log.d(TAG, "success");
-                            startCamera();
-                        } else {
-                            Log.d(TAG, "failed");
-                            Toast.makeText(getApplicationContext(), "permission denied", Toast.LENGTH_SHORT).show();
-                        }
+                    public void onGrant() {
+                        startCamera();
                     }
 
                     @Override
-                    public void onAuthorized() {
-                        Log.d(TAG, "Authorized");
-                        startCamera();
+                    public void onDenied(String permission) {
+                        Log.e(TAG, permission + "Denied");
                     }
+
                 }).build().request();
     }
 

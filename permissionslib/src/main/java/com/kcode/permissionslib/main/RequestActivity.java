@@ -71,7 +71,7 @@ public class RequestActivity extends AppCompatActivity {
         } else {
             Log.d(TAG, "Authorized");
             Intent intent = new Intent();
-            intent.putExtra(Constants.REQUEST_FLAG, Constants.AUTHORIZED);
+            intent.putExtra(Constants.GRANT, true);
             sendMessage(intent);
         }
     }
@@ -100,15 +100,18 @@ public class RequestActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQUEST_CODE:
 
+                int index = PermissionUtils.verifyPermissions(grantResults);
+
                 Intent intent = new Intent();
                 Bundle args = new Bundle();
-                args.putStringArray(Constants.PERMISSIONS, permissions);
-                args.putIntArray(Constants.GRANT_RESULTS, grantResults);
-                args.putInt(Constants.REQUEST_FLAG, Constants.REQUEST_RESULT);
+                if (index == -1) {
+                    args.putBoolean(Constants.GRANT,true);
+                }else {
+                    args.putString(Constants.DENIED,permissions[index]);
+                }
                 intent.putExtras(args);
 
                 sendMessage(intent);
-
                 break;
         }
     }

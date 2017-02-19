@@ -6,11 +6,7 @@ package com.kcode.permissionslib.main;
 
 public class Constants {
 
-    public static final int REQUEST_RESULT = 1; //Request Permission CallBack
-    public static final int AUTHORIZED = 2;     //Authorized
-
-    public static final String REQUEST_FLAG = "flag";
-    public static final String GRANT_RESULTS = "grantResults";
-    public static final String PERMISSIONS = "permissions";
+    public static final String GRANT = "grant";
+    public static final String DENIED = "denied";
 
 }

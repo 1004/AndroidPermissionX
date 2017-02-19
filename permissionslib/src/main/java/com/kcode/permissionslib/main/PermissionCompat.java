@@ -73,16 +73,12 @@ public class PermissionCompat {
                 return;
             }
 
-            int flag = intent.getIntExtra(Constants.REQUEST_FLAG, 0);
-            switch (flag) {
-                case Constants.REQUEST_RESULT:
-                    String[] permissions = intent.getStringArrayExtra(Constants.PERMISSIONS);
-                    int[] grantResults = intent.getIntArrayExtra(Constants.GRANT_RESULTS);
-                    mCallBack.onResult(permissions, grantResults);
-                    break;
-                case Constants.AUTHORIZED:
-                    mCallBack.onAuthorized();
-                    break;
+            boolean result = intent.getBooleanExtra(Constants.GRANT, false);
+            if (result) {
+                mCallBack.onGrant();
+            }else {
+                String permission = intent.getStringExtra(Constants.DENIED);
+                mCallBack.onDenied(permission);
             }
 
             LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mCallBackBroadcastReceiver);

@@ -21,7 +21,7 @@ allprojects {
  
  ```
  dependencies {
-        compile 'com.github.fccaikai:AndroidPermissionX:0.1.0'
+        compile 'com.github.fccaikai:AndroidPermissionX:1.0.0'
  }
  ```
 
@@ -50,19 +50,13 @@ add [OnRequestPermissionsCallBack](https://github.com/fccaikai/AndroidPermission
 ```
 builder.addRequestPermissionsCallBack(new OnRequestPermissionsCallBack() {
                     @Override
-                    public void onResult(String[] permissions, int[] grantResults) {
-                        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                            Log.d(TAG, "success");
-                            //do something
-                        } else {
-                            Log.d(TAG, "falied");
-                        }
-                    }
-                    
-                    @Override
-                    public void onAuthorized() {
-                        Log.d(TAG, "Authorized");
+                    public void onGrant() {
                         //do something
+                    }
+
+                    @Override
+                    public void onDenied(String permission) {
+                        Log.e(TAG, permission + "Denied");
                     }
                 })
 ```
