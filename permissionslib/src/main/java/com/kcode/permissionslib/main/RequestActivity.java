@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ContextThemeWrapper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.kcode.permissionslib.R;
@@ -63,7 +64,12 @@ public class RequestActivity extends AppCompatActivity {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
                     this, mPermissions[deniedIndex])) {
                 Log.d(TAG, "denied");
-                showExplainDialog();
+                if (TextUtils.isEmpty(mExplain)) {
+                    requestPermission();
+                }else {
+                    showExplainDialog();
+                }
+
             } else {
                 Log.d(TAG, "start request permission");
                 requestPermission();
