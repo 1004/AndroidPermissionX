@@ -83,16 +83,13 @@ public class RequestActivity extends AppCompatActivity {
     }
 
     private int checkSelfPermissions(String[] permissions) {
-        int index = -1;
         for (int i = 0; i < permissions.length; i++) {
             if (ContextCompat.checkSelfPermission(getApplicationContext(),
                     permissions[i]) != PackageManager.PERMISSION_GRANTED) {
-                index = i;
-                break;
+                return i;
             }
         }
-
-        return index;
+        return -1;
     }
 
     private void requestPermission() {

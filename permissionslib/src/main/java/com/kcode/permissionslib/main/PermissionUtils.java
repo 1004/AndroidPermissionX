@@ -10,9 +10,8 @@ public class PermissionUtils {
 
     public static int verifyPermissions(int[] grantResults) {
 
-        int index = -1;
         if(grantResults.length < 1){
-            return index;
+            return -1;
         }
 
         // Verify that each required permission has been granted, otherwise return false.
@@ -22,6 +21,6 @@ public class PermissionUtils {
             }
         }
 
-        return index;
+        return -1;
     }
 }
