@@ -33,12 +33,16 @@ public class RequestActivity extends AppCompatActivity {
     private String[] mPermissions;
 
     public static Intent newIntent(Context context, String[] permissions,
-                                   String explain, OnRequestPermissionsCallBack callBack) {
+            String explain, OnRequestPermissionsCallBack callBack) {
         Intent intent = new Intent(context, RequestActivity.class);
         Bundle extras = new Bundle();
         extras.putStringArray(PERMISSIONS, permissions);
         extras.putString(EXPLAIN, explain);
         intent.putExtras(extras);
+
+        if (context.getApplicationContext() == context) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
 
         return intent;
     }
@@ -66,7 +70,7 @@ public class RequestActivity extends AppCompatActivity {
                 Log.d(TAG, "denied");
                 if (TextUtils.isEmpty(mExplain)) {
                     requestPermission();
-                }else {
+                } else {
                     showExplainDialog();
                 }
 
@@ -98,7 +102,9 @@ public class RequestActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case REQUEST_CODE:
@@ -108,9 +114,9 @@ public class RequestActivity extends AppCompatActivity {
                 Intent intent = new Intent();
                 Bundle args = new Bundle();
                 if (index == -1) {
-                    args.putBoolean(Constants.GRANT,true);
-                }else {
-                    args.putString(Constants.DENIED,permissions[index]);
+                    args.putBoolean(Constants.GRANT, true);
+                } else {
+                    args.putString(Constants.DENIED, permissions[index]);
                 }
                 intent.putExtras(args);
 
@@ -126,7 +132,7 @@ public class RequestActivity extends AppCompatActivity {
     }
 
     private void showExplainDialog() {
-        new AlertDialog.Builder(new ContextThemeWrapper(this,R.style.DialogStyle))
+        new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.DialogStyle))
                 .setMessage(mExplain)
                 .setPositiveButton(R.string.sure, new DialogInterface.OnClickListener() {
                     @Override
